@@ -83,6 +83,7 @@ func templatize(dir string, latLng maps.LatLng, data []byte) {
 		"Data":              string(data),
 		"Lat":               latLng.Lat,
 		"Lng":               latLng.Lng,
+		"GoogleAnalyticsId": "UA-100043557-1",
 		"MapboxAccessToken": mapboxAccessToken,
 		"OpenGraphTags": map[string]interface{}{
 			"Title": socialTitle,
