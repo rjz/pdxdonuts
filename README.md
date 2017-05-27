@@ -1,8 +1,8 @@
 # PDX, City of Donuts
 
-Who doesn't love a fresh, Portland donut? No-one I know.
+Who doesn't love a fresh donut? No-one I know.
 
-[Here's a map](https://rjz.github.io/pdxdonuts) to help find 'em.
+Here's [the easiest way to find 'em](https://rjz.github.io/pdxdonuts).
 
 ## Testimonials
 
