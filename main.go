@@ -121,7 +121,7 @@ func main() {
 	}
 
 	// Look up location
-	log.Println("Encoding location...")
+	log.Printf("Finding '%s'...\n", *optLocation)
 	loc, err := c.Geocode(ctx, &maps.GeocodingRequest{
 		Address: *optLocation,
 	})
@@ -133,7 +133,10 @@ func main() {
 	} else if len(loc) < 1 {
 		log.Fatalf("more than one geocoding result for '%s'. Narrow it down!", *optLocation)
 	}
+
 	latLng := loc[0].Geometry.Location
+	log.Printf("Found '%s' at %3.4f, %3.4f\n", *optLocation, latLng.Lat, latLng.Lng)
+
 	initialRequest := maps.NearbySearchRequest{
 		Type:     maps.PlaceType(*optType),
 		Radius:   10000,
@@ -142,7 +145,7 @@ func main() {
 	}
 	maxResults := 100
 
-	log.Println("Loading results...")
+	log.Println("Searching places...")
 	if err := loadAll(c, initialRequest, maxResults); err != nil {
 		log.Fatalf("failed searching: %s", err)
 	}
@@ -153,11 +156,12 @@ func main() {
 		log.Fatalf("failed serializing results: %s", err)
 	}
 
-	log.Println("Compacting results...")
+	log.Println("Printing up your new map...")
 	compactResults := new(bytes.Buffer)
 	if err := json.Compact(compactResults, serializedResults); err != nil {
 		log.Fatalf("failed compacting JSON results: %s", err)
 	}
 
+	log.Println("We're done! Find the goods in ./dist...")
 	templatize(dir, latLng, compactResults.Bytes())
 }
