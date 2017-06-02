@@ -49,7 +49,8 @@ header .social a:visited {
   position:absolute;
   top:0;
   bottom:0;
-  width:100%;
+  left: 0;
+  right: 0;
 }
 
 .marker {
@@ -66,7 +67,7 @@ header .social a:visited {
 }
 
 .mapboxgl-popup-content {
-  box-shadow: rgba(0,0,0,0.3);
+  box-shadow: 0 3px 5px rgba(0,0,0,0.3);
   border-radius: 10px;
   color: #fff;
   background-color: #ff00ae;
