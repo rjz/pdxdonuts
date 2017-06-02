@@ -77,7 +77,6 @@ func templatize(dir string, latLng maps.LatLng, data []byte) {
 	t := template.Must(template.ParseGlob(pattern))
 	socialUrl := "https://rjz.github.io/pdxdonuts"
 	socialTitle := "Portland, City of Donuts"
-	escapedUrl := url.QueryEscape(socialUrl)
 	t.Execute(os.Stdout, map[string]interface{}{
 		"Title":             "City of Donuts",
 		"Data":              string(data),
@@ -92,8 +91,8 @@ func templatize(dir string, latLng maps.LatLng, data []byte) {
 			"Image": fmt.Sprintf("%s/%s", socialUrl, "donut.svg"),
 		},
 		"SocialLinks": map[string]interface{}{
-			"Facebook": fmt.Sprintf("https://www.facebook.com/sharer/sharer.php?u=%s", escapedUrl),
-			"Twitter":  fmt.Sprintf("https://twitter.com/home?status=%s%20%s", socialTitle, escapedUrl),
+			"Facebook": fmt.Sprintf("https://www.facebook.com/sharer/sharer.php?u=%s", url.QueryEscape(socialUrl)),
+			"Twitter":  fmt.Sprintf("https://twitter.com/home?status=%s", url.QueryEscape(socialUrl+" "+socialTitle)),
 		},
 	})
 }
