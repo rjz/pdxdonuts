@@ -17,16 +17,24 @@ import (
 	"time"
 )
 
+// Edit as needed
+var title = "City of Donuts"
+var socialUrl = "https://rjz.github.io/pdxdonuts"
+var socialTitle = "Portland, City of Donuts"
+var socialImage = "donut.svg"
+var googleAnalyticsId = "UA-100043557-1"
+
+// A datum corresponds to one entry on the map
 type datum struct {
 	Location maps.LatLng `json:"location,omitempty"`
 	Name     string      `json:"name,omitempty"`
 	Vicinity string      `json:"vicinity,omitempty"`
 }
 
+var results []datum
+
 var apiKey = os.Getenv("GOOGLE_API_KEY")
 var mapboxAccessToken = os.Getenv("MAPBOX_ACCESS_TOKEN")
-
-var results []datum
 
 var (
 	optKeyword  = flag.String("keyword", "donut", "Keyword to search for")
@@ -75,20 +83,18 @@ func usageAndExit(msg string) {
 func templatize(dir string, latLng maps.LatLng, data []byte) {
 	pattern := filepath.Join(dir, "templates", "*.tmpl")
 	t := template.Must(template.ParseGlob(pattern))
-	socialUrl := "https://rjz.github.io/pdxdonuts"
-	socialTitle := "Portland, City of Donuts"
 	t.Execute(os.Stdout, map[string]interface{}{
-		"Title":             "City of Donuts",
+		"Title":             title,
 		"Data":              string(data),
 		"Lat":               latLng.Lat,
 		"Lng":               latLng.Lng,
-		"GoogleAnalyticsId": "UA-100043557-1",
+		"GoogleAnalyticsId": googleAnalyticsId,
 		"MapboxAccessToken": mapboxAccessToken,
 		"OpenGraphTags": map[string]interface{}{
 			"Title": socialTitle,
 			"Type":  "website",
 			"URL":   socialUrl,
-			"Image": fmt.Sprintf("%s/%s", socialUrl, "donut.svg"),
+			"Image": fmt.Sprintf("%s/%s", socialUrl, socialImage),
 		},
 		"SocialLinks": map[string]interface{}{
 			"Facebook": fmt.Sprintf("https://www.facebook.com/sharer/sharer.php?u=%s", url.QueryEscape(socialUrl)),
