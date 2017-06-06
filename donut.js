@@ -16,7 +16,7 @@ window.makeMap = function(opts) {
   var activeMarkers = [];
 
   map.on('click', function () {
-    window.setTimeout.bind(window, function () {
+    window.setTimeout(function () {
       // Find all currently-open popups
       var ms = markers.filter(function (m) {
         return m.getPopup().isOpen();
