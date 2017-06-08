@@ -18,14 +18,15 @@ window.makeMap = function(opts) {
   map.on('click', function () {
     window.setTimeout(function () {
       // Find all currently-open popups
-      var ms = markers.filter(function (m) {
-        return m.getPopup().isOpen();
-      });
+      var ms = [];
 
-      // Close all *previously*-open popups
-      ms.forEach(function (m) {
-        if (activeMarkers.indexOf(m) > -1) {
-          m.togglePopup();
+      markers.forEach(function (m) {
+        if (m.getPopup().isOpen()) {
+          if (activeMarkers.indexOf(m) > -1) {
+            m.togglePopup();
+          } else {
+            ms.push(m);
+          }
         }
       });
 
@@ -36,7 +37,7 @@ window.makeMap = function(opts) {
 
       // Update previously-open list
       activeMarkers = ms;
-    });
+    }, 100);
   });
 
   var dataSource = {
