@@ -5,16 +5,14 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"golang.org/x/net/context"
+	"github.com/rjz/pdxdonuts/search"
 	"googlemaps.github.io/maps"
 	"log"
 	"net/url"
 	"os"
 	"path/filepath"
-	"regexp"
 
 	"text/template"
-	"time"
 )
 
 // Edit as needed
@@ -24,15 +22,6 @@ var socialTitle = "Portland, City of Donuts"
 var socialImage = "donut.svg"
 var googleAnalyticsId = "UA-100043557-1"
 
-// A datum corresponds to one entry on the map
-type datum struct {
-	Location maps.LatLng `json:"location,omitempty"`
-	Name     string      `json:"name,omitempty"`
-	Vicinity string      `json:"vicinity,omitempty"`
-}
-
-var results []datum
-
 var apiKey = os.Getenv("GOOGLE_API_KEY")
 var mapboxAccessToken = os.Getenv("MAPBOX_ACCESS_TOKEN")
 
@@ -41,37 +30,6 @@ var (
 	optType     = flag.String("type", "restaurant|bakery", "Types to search for (delimited|by|pipe")
 	optLocation = flag.String("location", "Portland, OR", "Location")
 )
-
-var re = regexp.MustCompile("oodoo")
-
-func loadAll(c *maps.Client, r maps.NearbySearchRequest, limit int) error {
-	resp, err := c.NearbySearch(context.Background(), &r)
-	if err != nil {
-		return err
-	}
-
-	for _, r := range resp.Results {
-		if re.FindString(r.Name) == "" {
-			results = append(results, datum{
-				Location: r.Geometry.Location,
-				Name:     r.Name,
-				Vicinity: r.Vicinity,
-			})
-		}
-	}
-
-	resultCount := len(resp.Results)
-	if resultCount >= limit || resp.NextPageToken == "" {
-		return nil
-	}
-
-	// Take a deep, rate-limited breath before carrying on
-	time.Sleep(5 * time.Second)
-
-	nextR := maps.NearbySearchRequest{PageToken: resp.NextPageToken}
-	nextLimit := limit - resultCount
-	return loadAll(c, nextR, nextLimit)
-}
 
 func usageAndExit(msg string) {
 	fmt.Fprintln(os.Stderr, msg)
@@ -119,44 +77,23 @@ func main() {
 		panic(err)
 	}
 
-	ctx := context.Background()
 	c, err := maps.NewClient(maps.WithAPIKey(apiKey))
 	if err != nil {
 		log.Fatalf("failed creating client: %s", err)
 	}
 
-	// Look up location
-	log.Printf("Finding '%s'...\n", *optLocation)
-	loc, err := c.Geocode(ctx, &maps.GeocodingRequest{
-		Address: *optLocation,
-	})
-
-	if err != nil {
-		log.Fatalf("failed geocoding: %s", err)
-	} else if len(loc) < 1 {
-		log.Fatalf("no geocoding results for '%s'", *optLocation)
-	} else if len(loc) < 1 {
-		log.Fatalf("more than one geocoding result for '%s'. Narrow it down!", *optLocation)
-	}
-
-	latLng := loc[0].Geometry.Location
-	log.Printf("Found '%s' at %3.4f, %3.4f\n", *optLocation, latLng.Lat, latLng.Lng)
-
-	initialRequest := maps.NearbySearchRequest{
-		Type:     maps.PlaceType(*optType),
-		Radius:   10000,
-		Keyword:  *optKeyword,
-		Location: &latLng,
-	}
-	maxResults := 100
-
-	log.Println("Searching places...")
-	if err := loadAll(c, initialRequest, maxResults); err != nil {
-		log.Fatalf("failed searching: %s", err)
+	s := search.NewSearch(c)
+	if err := s.Do(*optLocation, &search.Options{
+		Type:    *optType,
+		Keyword: *optKeyword,
+		Limit:   100,
+		Radius:  10000, // m
+	}); err != nil {
+		log.Fatalf("Search failed '%s'", err)
 	}
 
 	log.Println("Serializing results...")
-	serializedResults, err := json.Marshal(results)
+	serializedResults, err := json.Marshal(s.Results)
 	if err != nil {
 		log.Fatalf("failed serializing results: %s", err)
 	}
@@ -168,5 +105,5 @@ func main() {
 	}
 
 	log.Println("We're done! Find the goods in ./dist...")
-	templatize(dir, latLng, compactResults.Bytes())
+	templatize(dir, s.LatLng, compactResults.Bytes())
 }
