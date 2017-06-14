@@ -6,21 +6,11 @@ import (
 	"flag"
 	"fmt"
 	"github.com/rjz/pdxdonuts/search"
+	"github.com/rjz/pdxdonuts/template"
 	"googlemaps.github.io/maps"
 	"log"
-	"net/url"
 	"os"
-	"path/filepath"
-
-	"text/template"
 )
-
-// Edit as needed
-var title = "City of Donuts"
-var socialUrl = "https://rjz.github.io/pdxdonuts"
-var socialTitle = "Portland, City of Donuts"
-var socialImage = "donut.svg"
-var googleAnalyticsId = "UA-100043557-1"
 
 var apiKey = os.Getenv("GOOGLE_API_KEY")
 var mapboxAccessToken = os.Getenv("MAPBOX_ACCESS_TOKEN")
@@ -36,29 +26,6 @@ func usageAndExit(msg string) {
 	fmt.Println("Flags:")
 	flag.PrintDefaults()
 	os.Exit(2)
-}
-
-func templatize(dir string, latLng maps.LatLng, data []byte) {
-	pattern := filepath.Join(dir, "templates", "*.tmpl")
-	t := template.Must(template.ParseGlob(pattern))
-	t.Execute(os.Stdout, map[string]interface{}{
-		"Title":             title,
-		"Data":              string(data),
-		"Lat":               latLng.Lat,
-		"Lng":               latLng.Lng,
-		"GoogleAnalyticsId": googleAnalyticsId,
-		"MapboxAccessToken": mapboxAccessToken,
-		"OpenGraphTags": map[string]interface{}{
-			"Title": socialTitle,
-			"Type":  "website",
-			"URL":   socialUrl,
-			"Image": fmt.Sprintf("%s/%s", socialUrl, socialImage),
-		},
-		"SocialLinks": map[string]interface{}{
-			"Facebook": fmt.Sprintf("https://www.facebook.com/sharer/sharer.php?u=%s", url.QueryEscape(socialUrl)),
-			"Twitter":  fmt.Sprintf("https://twitter.com/home?status=%s", url.QueryEscape(socialUrl+" "+socialTitle)),
-		},
-	})
 }
 
 func main() {
@@ -82,6 +49,7 @@ func main() {
 		log.Fatalf("failed creating client: %s", err)
 	}
 
+	log.Println("Finding the results...")
 	s := search.NewSearch(c)
 	if err := s.Do(*optLocation, &search.Options{
 		Type:    *optType,
@@ -93,7 +61,7 @@ func main() {
 	}
 
 	log.Println("Serializing results...")
-	serializedResults, err := json.Marshal(s.Results)
+	serializedResults, err := json.Marshal(s.Places)
 	if err != nil {
 		log.Fatalf("failed serializing results: %s", err)
 	}
@@ -105,5 +73,14 @@ func main() {
 	}
 
 	log.Println("We're done! Find the goods in ./dist...")
-	templatize(dir, s.LatLng, compactResults.Bytes())
+	pageData, err := template.LoadPageData("vars.json")
+	if err != nil {
+		log.Fatalf("failed loading page vars: %s", err)
+	}
+
+	pageData.MapboxAccessToken = mapboxAccessToken
+	pageData.Lat = s.LatLng.Lat
+	pageData.Lng = s.LatLng.Lng
+	pageData.Data = compactResults.String()
+	template.Apply(dir, pageData)
 }

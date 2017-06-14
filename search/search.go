@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-// Result represents a single entry for the map
-type Result struct {
+// Place represents a single entry for the map
+type Place struct {
 	Id       string      `json:"id,omitempty"`
 	Location maps.LatLng `json:"location,omitempty"`
 	Name     string      `json:"name,omitempty"`
@@ -25,10 +25,10 @@ type Options struct {
 
 // Search wraps search results
 type Search struct {
-	Results []*Result
-	LatLng  maps.LatLng
-	client  *maps.Client
-	ctx     context.Context
+	Places []*Place
+	LatLng maps.LatLng
+	client *maps.Client
+	ctx    context.Context
 }
 
 func (s *Search) loadAll(r maps.NearbySearchRequest, limit int) error {
@@ -38,7 +38,7 @@ func (s *Search) loadAll(r maps.NearbySearchRequest, limit int) error {
 	}
 
 	for _, r := range resp.Results {
-		s.Results = append(s.Results, &Result{
+		s.Places = append(s.Places, &Place{
 			Id:       fmt.Sprintf("g!%s", r.PlaceID),
 			Location: r.Geometry.Location,
 			Name:     r.Name,
