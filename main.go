@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/rjz/pdxdonuts/generate"
 	"github.com/rjz/pdxdonuts/search"
-	"github.com/rjz/pdxdonuts/template"
 	"googlemaps.github.io/maps"
 	"log"
 	"os"
@@ -73,7 +73,7 @@ func main() {
 	}
 
 	log.Println("We're done! Find the goods in ./dist...")
-	pageData, err := template.LoadPageData("vars.json")
+	pageData, err := generate.LoadPageData("vars.json")
 	if err != nil {
 		log.Fatalf("failed loading page vars: %s", err)
 	}
@@ -82,5 +82,5 @@ func main() {
 	pageData.Lat = s.LatLng.Lat
 	pageData.Lng = s.LatLng.Lng
 	pageData.Data = compactResults.String()
-	template.Apply(dir, pageData)
+	generate.Do(dir, pageData)
 }

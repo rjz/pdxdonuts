@@ -1,4 +1,4 @@
-package template
+package generate
 
 import (
 	"encoding/json"
@@ -35,7 +35,7 @@ type PageData struct {
 	SocialLinks       SocialData    `json:"social"`
 }
 
-func Apply(dir string, data *PageData) {
+func Do(dir string, data *PageData) {
 	pattern := filepath.Join(dir, "templates", "*.tmpl")
 	t := template.Must(template.ParseGlob(pattern))
 	t.Execute(os.Stdout, data)
