@@ -35,10 +35,20 @@ type PageData struct {
 	SocialLinks       SocialData    `json:"social"`
 }
 
-func Do(dir string, data *PageData) {
+func Do(dir string, data *PageData) error {
+	// Copy statics
+	if err := CopyDir(fmt.Sprintf("%s/static", dir), fmt.Sprintf("%s/dist", dir)); err != nil {
+		return err
+	}
+
+	// Templatize index.html
 	pattern := filepath.Join(dir, "templates", "*.tmpl")
 	t := template.Must(template.ParseGlob(pattern))
-	t.Execute(os.Stdout, data)
+	f, err := os.Create(filepath.Join(dir, "dist", "index.html"))
+	if err != nil {
+		return err
+	}
+	return t.Execute(f, data)
 }
 
 func LoadPageData(filename string) (*PageData, error) {

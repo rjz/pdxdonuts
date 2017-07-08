@@ -16,6 +16,7 @@ var apiKey = os.Getenv("GOOGLE_API_KEY")
 var mapboxAccessToken = os.Getenv("MAPBOX_ACCESS_TOKEN")
 
 var (
+	optDest     = flag.String("dest", "dist", "Output directory")
 	optKeyword  = flag.String("keyword", "donut", "Keyword to search for")
 	optType     = flag.String("type", "restaurant|bakery", "Types to search for (delimited|by|pipe")
 	optLocation = flag.String("location", "Portland, OR", "Location")
@@ -50,14 +51,34 @@ func main() {
 	}
 
 	log.Println("Finding the results...")
-	s := search.NewSearch(c)
-	if err := s.Do(*optLocation, &search.Options{
+	searchOpts := search.Options{
+		Address: *optLocation,
 		Type:    *optType,
 		Keyword: *optKeyword,
 		Limit:   100,
 		Radius:  10000, // m
-	}); err != nil {
-		log.Fatalf("Search failed '%s'", err)
+	}
+
+	// TODO: refactor search <=> cache interface
+	cache := search.NewCache()
+	var s *search.Search
+	if cache != nil {
+		var err error
+		if s, err = cache.Get(&searchOpts); err != nil {
+			log.Printf("cache error: %s\n", err)
+		} else if s != nil {
+			log.Println("cache hit, using cached results")
+		} else {
+			log.Println("cache miss, asking google")
+			s = search.NewSearch(c)
+			if err := s.Do(&searchOpts); err != nil {
+				log.Fatalf("Search failed '%s'", err)
+			}
+
+			if err := cache.Set(&searchOpts, s); err != nil {
+				log.Printf("failed caching results: %s\n", err)
+			}
+		}
 	}
 
 	log.Println("Serializing results...")
@@ -72,7 +93,6 @@ func main() {
 		log.Fatalf("failed compacting JSON results: %s", err)
 	}
 
-	log.Println("We're done! Find the goods in ./dist...")
 	pageData, err := generate.LoadPageData("vars.json")
 	if err != nil {
 		log.Fatalf("failed loading page vars: %s", err)
@@ -82,5 +102,8 @@ func main() {
 	pageData.Lat = s.LatLng.Lat
 	pageData.Lng = s.LatLng.Lng
 	pageData.Data = compactResults.String()
-	generate.Do(dir, pageData)
+	if err := generate.Do(dir, pageData); err != nil {
+		log.Fatalf("failed building template: %s", err)
+	}
+	log.Printf("We're done! Find the goods in %s...\n", *optDest)
 }

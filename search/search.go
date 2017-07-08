@@ -17,6 +17,7 @@ type Place struct {
 
 // Options expose search options
 type Options struct {
+	Address string
 	Type    string
 	Keyword string
 	Radius  uint
@@ -59,18 +60,19 @@ func (s *Search) loadAll(r maps.NearbySearchRequest, limit int) error {
 }
 
 // Do finds all results near an address
-func (s *Search) Do(address string, opts *Options) error {
+func (s *Search) Do(opts *Options) error {
+
 	// Look up location
 	loc, err := s.client.Geocode(s.ctx, &maps.GeocodingRequest{
-		Address: address,
+		Address: opts.Address,
 	})
 
 	if err != nil {
 		return fmt.Errorf("failed geocoding: %s", err)
 	} else if len(loc) < 1 {
-		return fmt.Errorf("no geocoding results for '%s'", address)
+		return fmt.Errorf("no geocoding results for '%s'", opts.Address)
 	} else if len(loc) < 1 {
-		return fmt.Errorf("more than one geocoding result for '%s'. Narrow it down!", address)
+		return fmt.Errorf("more than one geocoding result for '%s'. Narrow it down!", opts.Address)
 	}
 
 	s.LatLng = loc[0].Geometry.Location
