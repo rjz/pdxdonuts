@@ -59,26 +59,9 @@ func main() {
 		Radius:  10000, // m
 	}
 
-	// TODO: refactor search <=> cache interface
-	cache := search.NewCache()
-	var s *search.Search
-	if cache != nil {
-		var err error
-		if s, err = cache.Get(&searchOpts); err != nil {
-			log.Printf("cache error: %s\n", err)
-		} else if s != nil {
-			log.Println("cache hit, using cached results")
-		} else {
-			log.Println("cache miss, asking google")
-			s = search.NewSearch(c)
-			if err := s.Do(&searchOpts); err != nil {
-				log.Fatalf("Search failed '%s'", err)
-			}
-
-			if err := cache.Set(&searchOpts, s); err != nil {
-				log.Printf("failed caching results: %s\n", err)
-			}
-		}
+	s, err := search.Do(&searchOpts, c)
+	if err != nil {
+		log.Fatalf("failed searching: %s", err)
 	}
 
 	log.Println("Serializing results...")

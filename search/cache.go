@@ -10,9 +10,9 @@ import (
 var CacheDir = ".cache"
 
 type cachedSearch struct {
-	RetrievedAt time.Time `json:"retrievedAt"`
-	Options     `json:"options"`
-	Search      `json:"search"`
+	RetrievedAt  time.Time `json:"retrievedAt"`
+	Options      `json:"options"`
+	SearchResult `json:"search"`
 }
 
 func cacheKey(o *Options) string {
@@ -23,23 +23,23 @@ type Cache struct {
 	*diskache.Diskache
 }
 
-func (sc *Cache) Get(o *Options) (*Search, error) {
+func (sc *Cache) Get(o *Options) (*SearchResult, error) {
 	if data, isCached := sc.Diskache.Get(cacheKey(o)); isCached {
 		var sc cachedSearch
 		if err := json.Unmarshal(data, &sc); err != nil {
 			return nil, err
 		}
-		return &sc.Search, nil
+		return &sc.SearchResult, nil
 	}
 	return nil, nil
 }
 
-func (sc *Cache) Set(o *Options, s *Search) error {
+func (sc *Cache) Set(o *Options, s *SearchResult) error {
 	key := cacheKey(o)
 	data, err := json.Marshal(cachedSearch{
-		RetrievedAt: time.Now(),
-		Options:     *o,
-		Search:      *s,
+		RetrievedAt:  time.Now(),
+		Options:      *o,
+		SearchResult: *s,
 	})
 	if err != nil {
 		return err

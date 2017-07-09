@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"golang.org/x/net/context"
 	"googlemaps.github.io/maps"
+	"log"
 	"time"
 )
 
@@ -24,16 +25,14 @@ type Options struct {
 	Limit   int
 }
 
-// Search wraps search results
-type Search struct {
+// SearchResult wraps search results
+type SearchResult struct {
 	Places []*Place
 	LatLng maps.LatLng
-	client *maps.Client
-	ctx    context.Context
 }
 
-func (s *Search) loadAll(r maps.NearbySearchRequest, limit int) error {
-	resp, err := s.client.NearbySearch(s.ctx, &r)
+func (s *SearchResult) loadAll(ctx context.Context, client *maps.Client, r maps.NearbySearchRequest, limit int) error {
+	resp, err := client.NearbySearch(ctx, &r)
 	if err != nil {
 		return err
 	}
@@ -56,14 +55,16 @@ func (s *Search) loadAll(r maps.NearbySearchRequest, limit int) error {
 	time.Sleep(5 * time.Second)
 
 	nextR := maps.NearbySearchRequest{PageToken: resp.NextPageToken}
-	return s.loadAll(nextR, limit-resultCount)
+	return s.loadAll(ctx, client, nextR, limit-resultCount)
 }
 
-// Do finds all results near an address
-func (s *Search) Do(opts *Options) error {
+// do finds all results near an address
+func (s *SearchResult) do(opts *Options, client *maps.Client) error {
+
+	ctx := context.Background()
 
 	// Look up location
-	loc, err := s.client.Geocode(s.ctx, &maps.GeocodingRequest{
+	loc, err := client.Geocode(ctx, &maps.GeocodingRequest{
 		Address: opts.Address,
 	})
 
@@ -83,16 +84,36 @@ func (s *Search) Do(opts *Options) error {
 		Keyword:  opts.Keyword,
 		Location: &s.LatLng,
 	}
-	if err := s.loadAll(initialRequest, opts.Limit); err != nil {
+	if err := s.loadAll(ctx, client, initialRequest, opts.Limit); err != nil {
 		return fmt.Errorf("failed searching: %s", err)
 	}
 
 	return nil
 }
 
-func NewSearch(client *maps.Client) *Search {
-	return &Search{
-		client: client,
-		ctx:    context.Background(),
+// Do performs a cacheable search
+func Do(o *Options, c *maps.Client) (s *SearchResult, err error) {
+	cache := NewCache()
+	if cache != nil {
+		if s, err = cache.Get(o); err != nil {
+			log.Printf("cache error: %s\n", err)
+		} else if s != nil {
+			log.Println("cache hit, using cached results")
+			return
+		}
 	}
+
+	log.Println("cache miss, asking google")
+	s = new(SearchResult)
+	if err = s.do(o, c); err != nil {
+		return
+	}
+
+	if cache != nil {
+		if err := cache.Set(o, s); err != nil {
+			log.Printf("failed caching results: %s\n", err)
+		}
+	}
+
+	return
 }
