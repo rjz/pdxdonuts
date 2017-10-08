@@ -59,10 +59,14 @@ window.makeMap = function(opts) {
     }),
   };
 
+  var THEME_COUNT = 4;
+
   dataSource.features.forEach(function (place) {
     var iconSize = 64;
     var el = document.createElement('div');
-    el.className = 'marker';
+    var index = place.properties.name.split('')
+      .reduce((sum, c) => sum + c.charCodeAt(0), 0) % THEME_COUNT;
+    el.className = 'marker marker-' + index;
     el.style.width = iconSize + 'px';
     el.style.height = iconSize + 'px';
     el.style.borderRadius = Math.floor(iconSize / 2) + 'px';
@@ -77,6 +81,7 @@ window.makeMap = function(opts) {
     };
 
     var detail = document.createElement('div');
+    detail.className = 'detail-' + index;
     detail.innerHTML = [
       '<h2>' + place.properties.name + '</h2>',
       '<p>' + place.properties.vicinity + '</p>'
