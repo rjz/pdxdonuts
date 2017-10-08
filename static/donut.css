@@ -7,13 +7,13 @@ html {
 }
 
 header {
-  background-color: #7f2863;
+  background-color: #f1dcec;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  color: #fff;
+  color: #535d6c;
   position: fixed;
   top: 0;
   right: 0;
@@ -30,7 +30,7 @@ header h1 {
 header .social {
   margin: 0 1em 0 0;
   padding: 0;
-  color: #fff;
+  color: #535d6c;
   font-size: 1.4em;
 }
 
@@ -42,7 +42,7 @@ header .social li {
 
 header .social a:link,
 header .social a:visited {
-  color: #fff;
+  color: #535d6c;
 }
 
 #map {
@@ -55,22 +55,32 @@ header .social a:visited {
 
 .marker {
   display: flex;
-  background:url('./donut.svg');
+  background:url('./donut-0.svg');
   background-size: contain;
   cursor: pointer;
   position: absolute;
 }
 
+.marker-0 { background-image: url('./donut-0.svg'); }
+.marker-1 { background-image: url('./donut-1.svg'); }
+.marker-2 { background-image: url('./donut-2.svg'); }
+.marker-3 { background-image: url('./donut-3.svg'); }
+
 .mapboxgl-popup-tip {
-  border-top-color: #ff00ae !important;
+  border-top-color: #edd6b7 !important;
   box-shadow: rgba(0,0,0,1);
 }
+
+.detail-0 { color: #bc416d; }
+.detail-1 { color: #a93fb5; }
+.detail-2 { color: #e96941; }
+.detail-3 { color: #21a662; }
 
 .mapboxgl-popup-content {
   box-shadow: 0 3px 5px rgba(0,0,0,0.3);
   border-radius: 10px;
-  color: #fff;
-  background-color: #ff00ae;
+  color: #535d6c;
+  background-color: #edd6b7;
   font-family: 'Just Another Hand', sans-serif;
   font-size: 2em;
   text-align: center;
