@@ -40,6 +40,9 @@ func Do(dir string, data *PageData) error {
 	if err := CopyDir(fmt.Sprintf("%s/static", dir), fmt.Sprintf("%s/dist", dir)); err != nil {
 		return err
 	}
+	if err := CopyDir(fmt.Sprintf("%s/client/dist", dir), fmt.Sprintf("%s/dist", dir)); err != nil {
+		return err
+	}
 
 	// Templatize index.html
 	pattern := filepath.Join(dir, "templates", "*.tmpl")

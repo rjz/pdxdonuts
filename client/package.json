@@ -1,0 +1,21 @@
+{
+  "name": "pdxdonuts-client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "node scripts/build",
+    "test": "node scripts/test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-preset-env": "^1.6.0",
+    "babelify": "^7.3.0",
+    "browserify": "^14.4.0",
+    "glob": "^7.1.2",
+    "mkdirp": "^0.5.1",
+    "tape": "^4.8.0"
+  }
+}
