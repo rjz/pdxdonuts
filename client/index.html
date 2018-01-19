@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    <meta charset="utf-8" />
+		<title>Forager</title>
+    <link rel="stylesheet" href="https://unpkg.com/zakalwe/zakalwe.min.css" />
+    <link rel="stylesheet" href="/style.css" />
+	</head>
+	<body>
+    <article>
+    <h1>Forager</h1>
+    <form id="forager" method="post" action="/maps">
+      <div class="xyz">
+        <label for="location">Location</label>
+        <input type="text" id="location" name="location" value="Portland, OR" />
+      </div>
+
+      <div class="xyz">
+        <label for="keyword">Keyword</label>
+        <input type="text" id="keyword" name="keyword" value="Donut" />
+      </div>
+
+      <div class="xyz">
+        <label for="types">Types</label>
+        <input type="text" id="types" name="types" value="restaurant|bakery" />
+      </div>
+
+      <div class="xyz">
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" value="Portland, Land of Dubious Burritos" />
+      </div>
+
+      <div class="xyz">
+        <label for="url">URL</label>
+        <input type="text" id="url" name="url" placeholder="Base URL" />
+      </div>
+
+      <div class="xyz">
+        <label for="icon">Icon URL</label>
+        <input type="text" id="icon" name="icon" placeholder="Icon URL" />
+      </div>
+
+      <div class="xyz">
+        <label for="googleAnalyticsId">Google Analytics ID</label>
+        <input type="text" id="googleAnalyticsId" name="googleAnalyticsId" placeholder="UA-XXXXXXXXXX-1" />
+      </div>
+
+      <h3>Secrets</h3>
+      <p>We won't store these, ever!</p>
+
+      <div class="xyz">
+        <label for="googleApiKey">
+          Google API Key (<a href="https://developers.google.com/places/web-service/get-api-key">Get an API Key</a>)
+        </label>
+        <input type="text" id="googleApiKey" name="googleApiKey" value="restaurant|bakery" />
+      </div>
+
+      <div class="xyz">
+        <label for="mapboxAccessToken">
+          Mapbox Access Token (<a href="https://www.mapbox.com/help/how-access-tokens-work/">Get an Access Token</a>)
+        </label>
+        <input type="text" id="mapboxAccessToken" name="mapboxAccessToken" placeholder="..." />
+      </div>
+
+      <input type="submit" />
+    </form>
+
+    <h2>References</h2>
+    <ul>
+      <li><a href="https://developers.google.com/maps/documentation/javascript/3.exp/reference#PlaceSearchRequest"><code>PlaceSearchRequest</code> specification</a></li>
+      <li><a href="https://developers.google.com/places/supported_types">valid <code>types</code></li>
+    </ul>
+    </article>
+    <script src="./download.js"></script>
+    <script src="./forager.js"></script>
+	</body>
+</html>

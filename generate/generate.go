@@ -36,15 +36,23 @@ type PageData struct {
 }
 
 func Do(dir string, data *PageData) error {
+	ex, err := os.Executable()
+	if err != nil {
+		return err
+	}
+
+	srcDir := filepath.Dir(ex)
+	static := fmt.Sprintf("%s/static", srcDir)
+
 	// Copy statics
-	if err := CopyDir(fmt.Sprintf("%s/static", dir), fmt.Sprintf("%s/dist", dir)); err != nil {
+	if err := CopyDir(static, dir); err != nil {
 		return err
 	}
 
 	// Templatize index.html
-	pattern := filepath.Join(dir, "templates", "*.tmpl")
+	pattern := filepath.Join(srcDir, "templates", "*.tmpl")
 	t := template.Must(template.ParseGlob(pattern))
-	f, err := os.Create(filepath.Join(dir, "dist", "index.html"))
+	f, err := os.Create(filepath.Join(dir, "index.html"))
 	if err != nil {
 		return err
 	}

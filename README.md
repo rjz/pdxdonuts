@@ -12,13 +12,14 @@ Here's [the easiest way to find 'em](https://rjz.github.io/pdxdonuts).
 
 ## Install
 
-Install dependencies as usual...
+With the go toolchain [installed and configured][install-golang], install
+dependencies as usual...
 
 ```ShellSession
 $ go get ./...
 ```
 
-Then just add API keys!
+And just add API keys!
 
 ```ShellSession
 # https://developers.google.com/places/web-service/get-api-key
@@ -33,3 +34,5 @@ $ go run main.go \
     -type 'restaurant|bakery' \
     -location 'Portland, OR'
 ```
+
+[install-golang]: https://golang.org/doc/install#testing
