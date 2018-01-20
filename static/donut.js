@@ -59,14 +59,11 @@ window.makeMap = function(opts) {
     }),
   };
 
-  var THEME_COUNT = 4;
-
   dataSource.features.forEach(function (place) {
     var iconSize = 64;
     var el = document.createElement('div');
-    var index = place.properties.name.split('')
-      .reduce((sum, c) => sum + c.charCodeAt(0), 0) % THEME_COUNT;
-    el.className = 'marker marker-' + index;
+
+    el.style.backgroundImage = 'url(' + opts.iconUrl + ')';
     el.style.width = iconSize + 'px';
     el.style.height = iconSize + 'px';
     el.style.borderRadius = Math.floor(iconSize / 2) + 'px';

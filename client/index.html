@@ -27,22 +27,22 @@
 
       <div class="xyz">
         <label for="title">Title</label>
-        <input type="text" id="title" name="title" value="Portland, Land of Dubious Burritos" />
+        <input type="text" id="title" name="pageData.title" value="Portland, Land of Donuts" />
       </div>
 
       <div class="xyz">
         <label for="url">URL</label>
-        <input type="text" id="url" name="url" placeholder="Base URL" />
+        <input type="text" id="url" name="pageData.url" placeholder="Base URL" value="https://rjz.github.io/pdxdonuts" />
       </div>
 
       <div class="xyz">
         <label for="icon">Icon URL</label>
-        <input type="text" id="icon" name="icon" placeholder="Icon URL" />
+        <input type="text" id="icon" name="pageData.icon" placeholder="Icon URL" value="./donut.svg" />
       </div>
 
       <div class="xyz">
         <label for="googleAnalyticsId">Google Analytics ID</label>
-        <input type="text" id="googleAnalyticsId" name="googleAnalyticsId" placeholder="UA-XXXXXXXXXX-1" />
+        <input type="text" id="googleAnalyticsId" name="pageData.googleAnalyticsId" placeholder="UA-XXXXXXXXXX-1" value="UA-100043557-1" />
       </div>
 
       <h3>Secrets</h3>
@@ -50,16 +50,18 @@
 
       <div class="xyz">
         <label for="googleApiKey">
-          Google API Key (<a href="https://developers.google.com/places/web-service/get-api-key">Get an API Key</a>)
+          Google API Key
+          (<a href="https://developers.google.com/places/web-service/get-api-key">What's this?</a>)
         </label>
-        <input type="text" id="googleApiKey" name="googleApiKey" value="restaurant|bakery" />
+        <input type="text" id="googleApiKey" name="googleApiKey" placeholder="..." />
       </div>
 
       <div class="xyz">
         <label for="mapboxAccessToken">
-          Mapbox Access Token (<a href="https://www.mapbox.com/help/how-access-tokens-work/">Get an Access Token</a>)
+          Mapbox Access Token
+          (<a href="https://www.mapbox.com/help/how-access-tokens-work/">What's this?</a>)
         </label>
-        <input type="text" id="mapboxAccessToken" name="mapboxAccessToken" placeholder="..." />
+        <input type="text" id="mapboxAccessToken" name="pageData.mapboxAccessToken" placeholder="..." />
       </div>
 
       <input type="submit" />
@@ -67,7 +69,11 @@
 
     <h2>References</h2>
     <ul>
-      <li><a href="https://developers.google.com/maps/documentation/javascript/3.exp/reference#PlaceSearchRequest"><code>PlaceSearchRequest</code> specification</a></li>
+      <li>
+        <a href="https://developers.google.com/maps/documentation/javascript/3.exp/reference#PlaceSearchRequest">
+          <code>PlaceSearchRequest</code> specification
+        </a>
+      </li>
       <li><a href="https://developers.google.com/places/supported_types">valid <code>types</code></li>
     </ul>
     </article>

@@ -3,14 +3,22 @@
   var formEl = document.getElementById('forager');
   formEl.addEventListener('submit', function (e) {
     e.preventDefault();
-    var opts = {
-      location: e.location,
-      keyword: e.keyword,
-    };
+
+    var inputs = formEl.querySelectorAll('input[type=text]');
+    var body = [].slice.call(inputs).reduce(function (acc, el) {
+      if (el.name.indexOf('pageData.') === 0) {
+        acc.pageData[el.name.slice(9)] = el.value;
+      } else {
+        acc[el.name] = el.value;
+      }
+      return acc;
+    }, {pageData: {}});
+
+    body.types = body.types.split('|');
 
     fetch(formEl.action, {
       method: 'POST', // or 'PUT'
-      body: JSON.stringify(opts),
+      body: JSON.stringify(body),
       headers: new Headers({
         'Content-Type': 'application/json'
       })
