@@ -10,61 +10,79 @@
     <article>
     <h1>Forager</h1>
     <form id="forager" method="post" action="/maps">
-      <div class="xyz">
-        <label for="location">Location</label>
-        <input type="text" id="location" name="location" value="Portland, OR" />
+      <fieldset title="Search Options">
+        <h3>Search Options</h3>
+        <div class="xyz">
+          <label for="location">Location</label>
+          <input type="text" id="location" name="location" value="Portland, OR" />
+        </div>
+
+        <div class="xyz">
+          <label for="keyword">Keyword</label>
+          <input type="text" id="keyword" name="keyword" value="Donut" />
+        </div>
+
+        <div class="xyz">
+          <label for="types">Types
+            <span class="instruction">
+              (<a href="https://developers.google.com/places/supported_types">valid types</a>)
+            </span>
+          </label>
+          <input type="text" id="types" name="types" value="restaurant|bakery" />
+        </div>
+      </fieldset>
+
+      <fieldset title="Rendering Options">
+        <h3>Rendering Options</h3>
+        <div class="xyz">
+          <label for="title">Title</label>
+          <input type="text" id="title" name="pageData.title" value="Portland, Land of Donuts" />
+        </div>
+
+        <div class="xyz">
+          <label for="url">URL</label>
+          <input type="text" id="url" name="pageData.url" placeholder="Base URL" value="https://rjz.github.io/pdxdonuts" />
+        </div>
+
+        <div class="xyz">
+          <label for="icon">Icon URL</label>
+          <input type="text" id="icon" name="pageData.icon" placeholder="Icon URL" value="./donut.svg" />
+        </div>
+
+        <div class="xyz">
+          <label for="googleAnalyticsId">Google Analytics ID</label>
+          <input type="text" id="googleAnalyticsId" name="pageData.googleAnalyticsId" placeholder="UA-XXXXXXXXXX-1" value="UA-100043557-1" />
+        </div>
+      </fieldset>
+
+
+      <fieldset title="API Keys">
+        <h3>API Keys</h3>
+        <div class="xyz">
+          <label for="googleApiKey">
+            Google API Key
+            <span class="instruction">
+              (<a href="https://developers.google.com/places/web-service/get-api-key">what's this?</a>)
+            </span>
+          </label>
+          <input type="text" id="googleApiKey" name="googleApiKey" placeholder="..." />
+        </div>
+
+        <div class="xyz">
+          <label for="mapboxAccessToken">
+            Mapbox Access Token
+            <span class="instruction">
+              (<a href="https://www.mapbox.com/help/how-access-tokens-work/">what's this?</a>)
+            </span>
+          </label>
+          <input type="text" id="mapboxAccessToken" name="pageData.mapboxAccessToken" placeholder="..." />
+        </div>
+      </fieldset>
+
+      <div class="form__actions">
+        <pre class="form__results"></pre>
+        <input type="submit" />
       </div>
-
-      <div class="xyz">
-        <label for="keyword">Keyword</label>
-        <input type="text" id="keyword" name="keyword" value="Donut" />
-      </div>
-
-      <div class="xyz">
-        <label for="types">Types</label>
-        <input type="text" id="types" name="types" value="restaurant|bakery" />
-      </div>
-
-      <div class="xyz">
-        <label for="title">Title</label>
-        <input type="text" id="title" name="pageData.title" value="Portland, Land of Donuts" />
-      </div>
-
-      <div class="xyz">
-        <label for="url">URL</label>
-        <input type="text" id="url" name="pageData.url" placeholder="Base URL" value="https://rjz.github.io/pdxdonuts" />
-      </div>
-
-      <div class="xyz">
-        <label for="icon">Icon URL</label>
-        <input type="text" id="icon" name="pageData.icon" placeholder="Icon URL" value="./donut.svg" />
-      </div>
-
-      <div class="xyz">
-        <label for="googleAnalyticsId">Google Analytics ID</label>
-        <input type="text" id="googleAnalyticsId" name="pageData.googleAnalyticsId" placeholder="UA-XXXXXXXXXX-1" value="UA-100043557-1" />
-      </div>
-
-      <h3>Secrets</h3>
-      <p>We won't store these, ever!</p>
-
-      <div class="xyz">
-        <label for="googleApiKey">
-          Google API Key
-          (<a href="https://developers.google.com/places/web-service/get-api-key">What's this?</a>)
-        </label>
-        <input type="text" id="googleApiKey" name="googleApiKey" placeholder="..." />
-      </div>
-
-      <div class="xyz">
-        <label for="mapboxAccessToken">
-          Mapbox Access Token
-          (<a href="https://www.mapbox.com/help/how-access-tokens-work/">What's this?</a>)
-        </label>
-        <input type="text" id="mapboxAccessToken" name="pageData.mapboxAccessToken" placeholder="..." />
-      </div>
-
-      <input type="submit" />
     </form>
 
     <h2>References</h2>

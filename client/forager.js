@@ -1,6 +1,7 @@
 (function(){
   'use strict';
   var formEl = document.getElementById('forager');
+  var resultsEl = document.querySelector('.form__results');
   formEl.addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -15,6 +16,7 @@
     }, {pageData: {}});
 
     body.types = body.types.split('|');
+    resultsEl.innerHTML = '';
 
     fetch(formEl.action, {
       method: 'POST', // or 'PUT'
@@ -26,7 +28,10 @@
       if (res.status === 200) {
         return res.blob().then(download);
       }
-      return res.json().then(json => alert(JSON.stringify(json, null, 2)));
+      return res.json().then(json => {
+        resultsEl.classList.add('form__results--error');
+        resultsEl.innerHTML = json.error;
+      });
     });
   });
 })();

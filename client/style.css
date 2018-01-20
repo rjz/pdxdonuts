@@ -1,24 +1,122 @@
-.xyz {
-  margin-bottom: 0.5em;
+form {
+  margin: auto;
+  max-width: 400px;
+}
+
+.form__actions {
+  margin-top: 1rem;
+}
+
+.form__results {
+  margin: 1em auto;
+  padding: 20px;
+  border-radius: 2px;
+}
+
+.form__results:empty {
+  display: none;
+}
+
+.form__results--error {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  color: #900;
+}
+
+fieldset {
+  border:none;
+  margin: 0;
+  padding: 10px;
+  width: 380px;
 }
 
 label {
-  display: block;
-  font-size: 0.8rem;
+  display:block;
+  margin: 1em 0 0.1em;
+  font-size:0.8rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
-input[type=text] {
+label em {
+  font-style:normal;
+  border-bottom:1px dotted $black;
+}
+
+label .instruction {
+  font-style:italic;
+  font-size: 0.8em;
+  text-transform: none;
+}
+
+input[type=text],
+input[type=email],
+textarea {
   border: 1px solid #231f20;
-  border-radius: 3px;
+  border-radius: 2px;
   font-style: italic;
+  font-size: 0.8em;
+  letter-spacing: 0.05em;
   padding: 10px;
-  width: 100%;
-  max-width: 300px;
+  width: calc(100% - 20px);
+
+  transition: 0.2s background-color;
 }
 
-input[type=text]:focus {
+input[type=text]:focus,
+input[type=email]:focus,
+textarea:focus,
+input[type=text]:active,
+input[type=email]:active,
+textarea:active {
   background-color: #ddf;
+  border-color: #1982d1;
+  /* color: darken($blue, 10%); */
+  outline: none;
 }
 
+@media screen and (max-width: 768px) {
+  input, textarea {
+    width: calc(100% - 20px);
+  }
+}
 
+input[type=submit],
+button {
+  background-color: #231f20;
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+  display: block;
+  margin: auto;
+  font-size: 0.8em;
+  letter-spacing: 0.2em;
+  padding: 0.5em 2em;
+  max-width: 180px;
+  text-transform: uppercase;
+}
+
+input[type=submit]:hover,
+input[type=submit]:focus,
+input[type=submit]:active,
+button:hover,
+button:focus,
+button:active {
+  background-color: #1982d1;
+  outline: none;
+}
+
+input[type=submit]:active,
+button:active {
+  position:relative;
+  top: 1px;
+}
+
+@media screen and (max-width: 768px) {
+  input[type=submit],
+  button {
+    max-width: 100%;
+    width: 100%;
+    padding: 0.5em 0;
+  }
+}

@@ -1,12 +1,12 @@
-package main
+package forager
 
 import (
 	"bytes"
 	"context"
 	"encoding/json"
 	"github.com/kr/pretty"
-	"github.com/rjz/pdxdonuts/generate"
-	"github.com/rjz/pdxdonuts/search"
+	"github.com/rjz/forager/generate"
+	"github.com/rjz/forager/search"
 	"googlemaps.github.io/maps"
 	"log"
 	"strings"

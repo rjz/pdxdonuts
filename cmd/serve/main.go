@@ -1,10 +1,3 @@
-//
-// server.go
-// Copyright (C) 2018 rj <rj@smithree>
-//
-// Distributed under terms of the MIT license.
-//
-
 package main
 
 import (
@@ -12,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/mholt/archiver"
+	"github.com/rjz/forager"
 	"gopkg.in/go-playground/validator.v9"
 	"io/ioutil"
 	"log"
@@ -42,7 +36,7 @@ func serve(port string) {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/maps", func(w http.ResponseWriter, r *http.Request) {
-		opts := MapOpts{}
+		opts := forager.MapOpts{}
 
 		bytes, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -65,7 +59,7 @@ func serve(port string) {
 		dir := os.TempDir() + "/forager"
 		ctx := context.Background()
 
-		if err := RenderMap(ctx, opts, dir); err != nil {
+		if err := forager.RenderMap(ctx, opts, dir); err != nil {
 			jsonSimpleError(w, http.StatusInternalServerError)
 			return
 		}
@@ -82,4 +76,9 @@ func serve(port string) {
 	log.Printf("Ready to serve @ %s\n", port)
 
 	log.Fatal(http.ListenAndServe(port, router))
+}
+
+func main() {
+	portNum := os.Getenv("PORT")
+	serve(":" + portNum)
 }

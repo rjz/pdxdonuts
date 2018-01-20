@@ -4,7 +4,8 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/rjz/pdxdonuts/generate"
+	"github.com/rjz/forager"
+	"github.com/rjz/forager/generate"
 	"os"
 	"strings"
 )
@@ -26,7 +27,7 @@ func usageAndExit(msg string) {
 	os.Exit(2)
 }
 
-func cli() {
+func main() {
 	if apiKey == "" {
 		usageAndExit("Please specify GOOGLE_API_KEY")
 	} else if mapboxAccessToken == "" {
@@ -41,7 +42,7 @@ func cli() {
 	}
 	pageData.MapboxAccessToken = mapboxAccessToken
 
-	opts := MapOpts{
+	opts := forager.MapOpts{
 		GoogleApiKey: apiKey,
 		Keyword:      *optKeyword,
 		Location:     *optLocation,
@@ -56,7 +57,7 @@ func cli() {
 		panic(err)
 	}
 
-	if err := RenderMap(ctx, opts, dir); err != nil {
+	if err := forager.RenderMap(ctx, opts, dir); err != nil {
 		panic(err)
 	}
 }
