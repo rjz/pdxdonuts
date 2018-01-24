@@ -60,7 +60,7 @@ func serve(port string) {
 		ctx := context.Background()
 
 		if err := forager.RenderMap(ctx, opts, dir); err != nil {
-			jsonSimpleError(w, http.StatusInternalServerError)
+			jsonError(w, http.StatusInternalServerError, err)
 			return
 		}
 

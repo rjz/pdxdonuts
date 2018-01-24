@@ -78,7 +78,6 @@ window.makeMap = function(opts) {
     };
 
     var detail = document.createElement('div');
-    detail.className = 'detail-' + index;
     detail.innerHTML = [
       '<h2>' + place.properties.name + '</h2>',
       '<p>' + place.properties.vicinity + '</p>'

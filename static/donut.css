@@ -55,7 +55,7 @@ header .social a:visited {
 
 .marker {
   display: flex;
-  background:url('./donut-0.svg');
+  background-image:url('./donut-0.svg');
   background-size: contain;
   cursor: pointer;
   position: absolute;
