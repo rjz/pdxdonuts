@@ -7,13 +7,17 @@ import (
 	"github.com/mholt/archiver"
 	"github.com/rjz/forager"
 	"gopkg.in/go-playground/validator.v9"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
+var RootDir = "."
 var validate *validator.Validate
+var templates *template.Template
 
 func jsonError(w http.ResponseWriter, code int, error string) {
 	bytes, _ := json.Marshal(struct {
@@ -60,7 +64,7 @@ func serve(port string) {
 		ctx := context.Background()
 
 		if err := forager.RenderMap(ctx, opts, dir); err != nil {
-			jsonError(w, http.StatusInternalServerError, err)
+			jsonError(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
@@ -71,7 +75,17 @@ func serve(port string) {
 		}
 	}).Methods("POST")
 
-	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./client"))) //.Methods("GET")
+	router.PathPrefix("/assets").Handler(http.StripPrefix("/assets", http.FileServer(http.Dir("./client")))).Methods("GET")
+
+	router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		data := map[string]interface{}{
+			"GoogleMapsClientKey": os.Getenv("GOOGLE_MAPS_CLIENT_KEY"),
+		}
+
+		log.Println(data)
+
+		templates.ExecuteTemplate(w, "index.html.tmpl", data)
+	})
 
 	log.Printf("Ready to serve @ %s\n", port)
 
@@ -81,4 +95,9 @@ func serve(port string) {
 func main() {
 	portNum := os.Getenv("PORT")
 	serve(":" + portNum)
+}
+
+func init() {
+	pattern := filepath.Join(RootDir, "templates", "*.html.tmpl")
+	templates = template.Must(template.ParseGlob(pattern))
 }

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>{{.Title}}</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <link rel="apple-touch-icon-precomposed" href="favicon-152.png">
+  <link rel="icon" href="favicon.png" sizes="32x32">
+
+{{with .OpenGraphTags}}
+  <meta property="og:title" content="{{.Title}}" />
+  <meta property="og:type" content="{{.Type}}" />
+  <meta property="og:url" content="{{.URL}}" />
+  <meta property="og:image" content="{{.Image}}" />
+{{end}}
+
+  <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Just+Another+Hand" rel="stylesheet">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+  <link href="./donut.css" rel="stylesheet" />
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.js"></script>
+  {{if .GoogleAnalyticsId}}
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', '{{.GoogleAnalyticsId}}', 'auto');
+    ga('send', 'pageview');
+  </script>
+  {{end}}
+
+
+
+</head>
+<body>
+  <header>
+    <h1>{{.Title}}</h1>
+
+    <ul class="social">
+{{with .SocialLinks}}
+      <li>
+        <a href="{{.Twitter}}" title="Share on Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a href="{{.Facebook}}" title="Share on Facebook">
+          <i class="fa fa-facebook"></i>
+        </a>
+      </li>
+{{end}}
+    </ul>
+
+  </header>
+  <div id="map"></div>
+  <script src="./donut.js"></script>
+  <script>
+makeMap({
+  iconUrl: '{{.Icon}}',
+  title: '{{.Title}}',
+  lat: {{.Lat}},
+  lng: {{.Lng}},
+  accessToken: '{{.MapboxAccessToken}}',
+
+  // Map data
+  data: {{.Data}},
+});
+  </script>
+</body>
+</html>

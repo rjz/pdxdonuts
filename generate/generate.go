@@ -35,20 +35,22 @@ type PageData struct {
 	SocialLinks       SocialData    `json:"social"`
 }
 
+var RootDir = "."
+
 func Do(dir string, data *PageData) error {
 	// Copy statics
-	if err := CopyDir(filepath.Join(".", "static"), dir); err != nil {
+	if err := CopyDir(filepath.Join(RootDir, "static"), dir); err != nil {
 		return err
 	}
 
 	// Templatize index.html
-	pattern := filepath.Join(".", "templates", "*.tmpl")
-	t := template.Must(template.ParseGlob(pattern))
+	pattern := filepath.Join(RootDir, "templates", "artifact.html.tmpl")
+	t := template.Must(template.ParseFiles(pattern))
 	f, err := os.Create(filepath.Join(dir, "index.html"))
 	if err != nil {
 		return err
 	}
-	return t.Execute(f, data)
+	return t.ExecuteTemplate(f, "artifact.html.tmpl", data)
 }
 
 func LoadPageData(filename string) (*PageData, error) {

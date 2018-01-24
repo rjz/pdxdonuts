@@ -34,4 +34,38 @@
       });
     });
   });
+
+  var mapEl = document.getElementById('google-map');
+
+  var placesEl = document.createElement('div');
+  placesEl.style.border = '1px solid red';
+  document.body.appendChild(placesEl);
+
+  window.initMap = function () {
+    var pdx = {
+      lat: 45.5231,
+      lng: -122.6765,
+    };
+    var map = new google.maps.Map(mapEl, {
+      zoom: 10,
+      center: pdx,
+    });
+
+    var places = new google.maps.places.PlacesService(placesEl);
+
+    var searchOpts = {
+      bounds: map.getBounds(),
+      query: 'donuts in Portland',
+      type: 'restaurant|bakery',
+    };
+
+    // google.maps.event.addListener(map, 'bounds_changed', function () {
+    //   console.log(searchOpts);
+    // });
+
+    places.textSearch(searchOpts, function (results, status, pagination) {
+      alert(results.map(r => r.name).join('\n'));
+      console.log({ results, status, pagination });
+    });
+  };
 })();
