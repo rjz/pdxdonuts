@@ -11,33 +11,87 @@ window.makeMap = function(opts) {
 
   var markers = [];
 
-  // Jump through some hoops to get singleton tooltips working with custom icons
-  // in MapboxGL.
-  var activeMarkers = [];
+  // Global lock
+  var activeMarker;
 
-  map.on('click', function () {
-    window.setTimeout(function () {
-      // Find all currently-open popups
-      var ms = markers.filter(function (m) {
-        return m.getPopup().isOpen();
-      });
+  var descriptionEl = document.getElementById('description');
 
-      // Close all *previously*-open popups
-      ms.forEach(function (m) {
-        if (activeMarkers.indexOf(m) > -1) {
-          m.togglePopup();
-        }
-      });
+  function clearDescription() {
+    descriptionEl.className = '';
+    descriptionEl.innerHTML = '';
+  }
 
-      // Pan to currently-open popup (there *should* only be one at a time)
-      if (ms.length) {
-        map.panTo(ms[0].getLngLat());
+  function setDescription(title, desc) {
+    descriptionEl.innerHTML = [
+      '<h2>' + title + '</h2>',
+      '<p>' + desc + '</p>',
+    ].join('\n');
+
+    setTimeout(function () {
+      descriptionEl.className = 'active';
+    });
+  }
+
+  function createArrows() {
+    var arrows = [];
+    var seed = Math.random() * 120;
+    for (i = 0; i < 3; i++) {
+      var rot = Math.floor((seed + Math.random() + i * 120) % 360);
+      var scale = Math.random() * 2 + 1.3;
+      var transform = [
+        'scale(' + scale + ')',
+        'rotate(' + rot + 'deg)',
+        'translateY(' + Math.floor(-33) + 'px)',
+      ].join(' ');
+      arrows.push('<div class="arrow" style="transform:' + transform + '"></div>');
+    }
+    return arrows;
+  }
+
+  function MyMarker(place) {
+    var iconSize = 64;
+    var opts = {};
+    var el = document.createElement('div');
+
+    this._place = place;
+
+    el.className = 'marker';
+    el.innerHTML = [
+      '<div class="shadow"></div>',
+      '<div class="icon"></div>',
+    ].concat(createArrows()).join('');
+
+    mapboxgl.Marker.call(this, el, opts);
+  }
+
+  MyMarker.prototype = Object.create(mapboxgl.Marker.prototype);
+
+  MyMarker.prototype._onMapClick = function (e) {
+    var targetElement = e.originalEvent.target;
+    var el = this._element;
+    if (targetElement === el || el.contains(targetElement)) {
+      el.className = 'marker active';
+      map.panTo(this.getLngLat());
+
+      // this.togglePopup();
+
+      clearDescription();
+
+      if (this === activeMarker) {
+        this._element.className = 'marker';
+        activeMarker = null;
+        return;
+      } else if (activeMarker) {
+        activeMarker._element.className = 'marker';
+        // activeMarker._popup.remove();
       }
 
-      // Update previously-open list
-      activeMarkers = ms;
-    });
-  });
+      var properties = this._place.properties;
+
+      setDescription(properties.name, properties.vicinity);
+      activeMarker = this;
+    }
+  };
 
   var dataSource = {
     type: 'FeatureCollection',
@@ -59,49 +113,42 @@ window.makeMap = function(opts) {
     }),
   };
 
-  var THEME_COUNT = 4;
-
   dataSource.features.forEach(function (place) {
-    var iconSize = 64;
-    var el = document.createElement('div');
-    var index = place.properties.name.split('')
-      .reduce((sum, c) => sum + c.charCodeAt(0), 0) % THEME_COUNT;
-    el.className = 'marker marker-' + index;
-    el.style.width = iconSize + 'px';
-    el.style.height = iconSize + 'px';
-    el.style.borderRadius = Math.floor(iconSize / 2) + 'px';
+    // var popupOptions = {
+    //   closeButton: false,
+    //   closeOnClick: false,
+    //   anchor: 'bottom',
+    //   offset: {
+    //     bottom: [0, -24]
+    //   }
+    // };
 
-    var popupOptions = {
-      closeButton: false,
-      closeOnClick: false,
-      anchor: 'bottom',
-      offset: {
-        bottom: [0, -28]
-      }
-    };
+    // var detail = document.createElement('div');
+    // detail.innerHTML = [
+    //   '<h2>' + place.properties.name + '</h2>',
+    //   '<p>' + place.properties.vicinity + '</p>'
+    // ].join('');
 
-    var detail = document.createElement('div');
-    detail.className = 'detail-' + index;
-    detail.innerHTML = [
-      '<h2>' + place.properties.name + '</h2>',
-      '<p>' + place.properties.vicinity + '</p>'
-    ].join('');
+    // var popup = new mapboxgl.Popup(popupOptions);
+    // popup
+    //   .setLngLat(place.geometry.coordinates)
+    //   .setDOMContent(detail);
 
-    var popup = new mapboxgl.Popup(popupOptions)
-      .setLngLat(place.geometry.coordinates)
-      .setDOMContent(detail)
-      .addTo(map);
-
-    var marker = new mapboxgl.Marker(el, {
-      offset: [
-        -iconSize / 2,
-        -iconSize / 2
-      ]
-    });
+    var marker = new MyMarker(place);
 
     marker.setLngLat(place.geometry.coordinates)
-      .setPopup(popup)
+    //  .setPopup(popup)
       .addTo(map);
+
+    // popup.on('open', function () {
+    //   setTimeout(function () {
+    //     popup._content.className = 'mapboxgl-popup-content open';
+    //   });
+    // });
+
+    // popup.on('close', function () {
+    //   popup._content.className = 'mapboxgl-popup-content';
+    // });
 
     markers.push(marker);
   });
