@@ -14,11 +14,13 @@
   <meta property="og:image" content="{{.Image}}" />
 {{end}}
 
-  <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css?family=Just+Another+Hand" rel="stylesheet">
+
+  <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.45.0/mapbox-gl.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
   <link href="./donut.css" rel="stylesheet" />
-  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.js"></script>
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.45.0/mapbox-gl.js"></script>
+
   {{if .GoogleAnalyticsId}}
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -30,8 +32,6 @@
     ga('send', 'pageview');
   </script>
   {{end}}
-
-
 
 </head>
 <body>
@@ -52,6 +52,10 @@
       </li>
 {{end}}
     </ul>
+
+    <div id="description" class="active">
+      Pick your donut to learn more.
+    </div>
 
   </header>
   <div id="map"></div>

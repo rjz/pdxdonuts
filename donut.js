@@ -10,6 +10,8 @@ window.makeMap = function(opts) {
   });
 
   var markers = [];
+
+  // Global lock
   var activeMarker;
 
   var descriptionEl = document.getElementById('description');
@@ -71,6 +73,8 @@ window.makeMap = function(opts) {
       el.className = 'marker active';
       map.panTo(this.getLngLat());
 
+      // this.togglePopup();
+
       clearDescription();
 
       if (this === activeMarker) {
@@ -79,6 +83,7 @@ window.makeMap = function(opts) {
         return;
       } else if (activeMarker) {
         activeMarker._element.className = 'marker';
+        // activeMarker._popup.remove();
       }
 
       var properties = this._place.properties;
@@ -109,10 +114,41 @@ window.makeMap = function(opts) {
   };
 
   dataSource.features.forEach(function (place) {
+    // var popupOptions = {
+    //   closeButton: false,
+    //   closeOnClick: false,
+    //   anchor: 'bottom',
+    //   offset: {
+    //     bottom: [0, -24]
+    //   }
+    // };
+
+    // var detail = document.createElement('div');
+    // detail.innerHTML = [
+    //   '<h2>' + place.properties.name + '</h2>',
+    //   '<p>' + place.properties.vicinity + '</p>'
+    // ].join('');
+
+    // var popup = new mapboxgl.Popup(popupOptions);
+    // popup
+    //   .setLngLat(place.geometry.coordinates)
+    //   .setDOMContent(detail);
+
     var marker = new MyMarker(place);
 
     marker.setLngLat(place.geometry.coordinates)
+    //  .setPopup(popup)
       .addTo(map);
+
+    // popup.on('open', function () {
+    //   setTimeout(function () {
+    //     popup._content.className = 'mapboxgl-popup-content open';
+    //   });
+    // });
+
+    // popup.on('close', function () {
+    //   popup._content.className = 'mapboxgl-popup-content';
+    // });
 
     markers.push(marker);
   });
